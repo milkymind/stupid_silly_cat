@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f6f6f6; /* Matched the background color of this chat */
+    background-color: #f0f0f0; /* Matched the background color of this chat */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -10,7 +10,7 @@ body {
 
 .container {
     text-align: center;
-    background-color: #ffffff; /* White background for the container */
+    background-color: #2e2e2e; /* Matched the background color of this chat */
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: Adding a subtle shadow */
