@@ -22,12 +22,19 @@
         #guide {
             margin-bottom: 20px;
         }
+        #canvas-container {
+            position: relative;
+        }
         #canvas {
             border: 1px solid #f1f1f1;
             margin-top: 20px;
         }
         .hidden {
             display: none;
+        }
+        .overlay-template {
+            width: 50px;
+            cursor: move;
         }
     </style>
 </head>
@@ -44,24 +51,21 @@
         
         <label for="template-select">Choose an overlay template:</label>
         <select id="template-select">
-            <option value="template1.png">Laser Beams 1</option>
-            <option value="template2.png">Laser Beams 2</option>
-            <option value="template3.png">Laser Beams 3</option>
+            <option value="template1.png">Both Laser Beams</option>
+            <option value="template2.png">Left Laser Beam</option>
+            <option value="template3.png">Right Laser Beam</option>
         </select><br><br>
 
-        <label for="resize-range">Resize Overlay:</label>
-        <input type="range" id="resize-range" min="10" max="200" value="100"><br><br>
-
-        <label for="rotate-range">Rotate Overlay (degrees):</label>
-        <input type="range" id="rotate-range" min="0" max="360" value="0"><br><br>
-
-        <button type="button" onclick="applyOverlay()">Apply Overlay</button><br><br>
+        <button type="button" onclick="addOverlay()">Add Overlay</button><br><br>
         
         <a id="download-link" class="hidden" download="customized-image.jpeg">Download Customized Image</a>
     </form>
 
-    <canvas id="canvas" class="hidden" width="400" height="400"></canvas>
+    <div id="canvas-container">
+        <div id="canvas"></div>
+    </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/konva@8.3.5/konva.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
