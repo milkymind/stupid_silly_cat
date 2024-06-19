@@ -9,12 +9,18 @@
 <body>
   <div class="pad"></div>
   <h1>Stupid Silly Laser Eye Editor</h1>
-  <p>Steps:<br>
+  <div>
+    <p>
+      Steps:<br>
     1. Upload image file.<br>
     2. Click the laser beams to add them to canvas.<br>
     3. Edit laser beam position, rotation, and scale.<br>
-    4. Download your silly looking Ordinal.</p>
-  <input type="file" id="uploadInput" accept="image/*">
+    4. Download your silly looking Ordinal.<br>
+    </p>
+    </div>
+    <div>
+      <input type="file" id="uploadInput" accept="image/*">
+  </div>
   <div id="editModes" class="carousel">
     <label>
       <input type="radio" name="editMode" id="positionButton" checked>
@@ -29,7 +35,6 @@
       Scale
     </label>
   </div>
-  </div>
   <canvas id="imageCanvas" width="400" height="400"></canvas>
   <div id="templateCarousel" class="carousel">
     <!-- Template images will be added dynamically by JavaScript -->
@@ -41,3 +46,4 @@
 </body>
 </body>
 </html>
+

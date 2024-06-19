@@ -15,7 +15,8 @@ body {
 }
 
 input[type="file"] {
-    margin-bottom: 10px;
+    margin-top: 10px;
+      /* margin-bottom: 10px; */
 }
 
 .carousel {
@@ -36,8 +37,9 @@ input[type="file"] {
 }
 
 .pad {
-  padding: 10px;
+    padding: 10px;
 }
+
 canvas {
     border: 1px solid #ccc;
     margin-top: 10px;
