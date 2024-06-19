@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-    const templateContainer = document.getElementById('template-container');
     let uploadedImage;
 
     // Handle image upload
@@ -26,13 +25,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Enable templates to be draggable
-    templateContainer.addEventListener('dragstart', function(e) {
-        const templateSrc = e.target.getAttribute('src');
-        e.dataTransfer.setData('text/plain', templateSrc);
+    const templateItems = document.querySelectorAll('.template-item img');
+    templateItems.forEach(item => {
+        item.addEventListener('dragstart', function(e) {
+            e.dataTransfer.setData('text/plain', item.src);
+        });
     });
 
     // Prevent default behavior for drag events
-    templateContainer.addEventListener('dragover', function(e) {
+    canvas.addEventListener('dragover', function(e) {
         e.preventDefault();
     });
 
