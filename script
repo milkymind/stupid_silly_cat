@@ -1,3 +1,7 @@
+let stage;
+let layer;
+let backgroundImage;
+
 document.getElementById('image-upload').addEventListener('change', handleImageUpload);
 
 function handleImageUpload(event) {
@@ -7,17 +11,28 @@ function handleImageUpload(event) {
     reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
-            const canvas = document.getElementById('canvas');
-            const ctx = canvas.getContext('2d');
+            const canvasContainer = document.getElementById('canvas-container');
+            canvasContainer.innerHTML = ''; // Clear existing canvas
+            const width = 400;
+            const height = 400;
 
-            // Resize and center the image on the canvas
-            const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
-            const x = (canvas.width / 2) - (img.width / 2) * scale;
-            const y = (canvas.height / 2) - (img.height / 2) * scale;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+            stage = new Konva.Stage({
+                container: 'canvas',
+                width: width,
+                height: height
+            });
 
-            document.getElementById('canvas').classList.remove('hidden');
+            layer = new Konva.Layer();
+            stage.add(layer);
+
+            backgroundImage = new Konva.Image({
+                image: img,
+                width: width,
+                height: height
+            });
+
+            layer.add(backgroundImage);
+            layer.draw();
         }
         img.src = e.target.result;
     }
@@ -25,44 +40,44 @@ function handleImageUpload(event) {
     reader.readAsDataURL(file);
 }
 
-function applyOverlay() {
+function addOverlay() {
     const templateSelect = document.getElementById('template-select');
     const templateSrc = templateSelect.value;
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    const resizeFactor = document.getElementById('resize-range').value / 100;
-    const rotationDegrees = document.getElementById('rotate-range').value;
     const templateImg = new Image();
 
     templateImg.onload = function() {
-        const width = templateImg.width * resizeFactor;
-        const height = templateImg.height * resizeFactor;
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
+        const img = new Konva.Image({
+            image: templateImg,
+            draggable: true
+        });
 
-        // Clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height); 
-        
-        // Redraw the base image
-        const baseImg = new Image();
-        baseImg.onload = function() {
-            const scale = Math.min(canvas.width / baseImg.width, canvas.height / baseImg.height);
-            const x = (canvas.width / 2) - (baseImg.width / 2) * scale;
-            const y = (canvas.height / 2) - (baseImg.height / 2) * scale;
-            ctx.drawImage(baseImg, x, y, baseImg.width * scale, baseImg.height * scale);
+        // Add transformers
+        const transformer = new Konva.Transformer();
+        layer.add(transformer);
+        transformer.attachTo(img);
 
-            // Apply rotation and overlay template image
-            ctx.save();
-            ctx.translate(centerX, centerY);
-            ctx.rotate((rotationDegrees * Math.PI) / 180);
-            ctx.drawImage(templateImg, -width / 2, -height / 2, width, height);
-            ctx.restore();
-    
-            document.getElementById('download-link').href = canvas.toDataURL('image/jpeg');
-            document.getElementById('download-link').classList.remove('hidden');
-        }
-        baseImg.src = document.getElementById('image-upload').files[0].result;
+        img.on('transform', function () {
+            img.setAttrs({
+                width: img.width() * img.scaleX(),
+                height: img.height() * img.scaleY(),
+                scaleX: 1,
+                scaleY: 1,
+            });
+        });
+
+        layer.add(img);
+        layer.draw();
     }
 
     templateImg.src = templateSrc;
 }
+
+document.getElementById('download-link').addEventListener('click', function () {
+    const dataURL = stage.toDataURL({ pixelRatio: 1 });
+    const link = document.createElement('a');
+    link.href = dataURL;
+    link.download = 'customized-image.jpeg';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+});
