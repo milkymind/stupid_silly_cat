@@ -32,7 +32,14 @@ document.addEventListener('DOMContentLoaded', function() {
   function addOverlayToCanvas(overlayImageSrc) {
     const img = new Image();
     img.onload = function () {
-      overlays.push({ image: img, x: 50, y: 50, width: 100, height: 100 }); // Initial position and size
+      overlays.push({
+        image: img,
+        x: 50,
+        y: 50,
+        width: 100,
+        height: 100,
+        rotation: 0,
+      }); // Initial position and size
       redrawCanvas();
     };
     img.src = overlayImageSrc;
@@ -112,11 +119,10 @@ document.addEventListener('DOMContentLoaded', function() {
         selectedOverlay.x = mouseX - dragStartX;
         selectedOverlay.y = mouseY - dragStartY;
       } else if (editState === EditState.ROTATION) {
-        const angle = Math.atan2(
-          mouseY - selectedOverlay.y,
-          mouseX - selectedOverlay.x
-        );
-        selectedOverlay.rotation = angle;
+        const centerX = selectedOverlay.x + selectedOverlay.width / 2;
+        const centerY = selectedOverlay.y + selectedOverlay.height / 2;
+        const angle = Math.atan2(mouseY - centerY, mouseX - centerX);
+        selectedOverlay.rotation = angle; // * (180 / Math.PI);
       } else if (editState === EditState.SCALE) {
         selectedOverlay.width = mouseX - selectedOverlay.x;
         selectedOverlay.height = mouseY - selectedOverlay.y;
@@ -155,13 +161,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     overlays.forEach(function (overlay) {
+      ctx.save();
+      ctx.translate(
+        overlay.x + overlay.width / 2,
+        overlay.y + overlay.height / 2
+      );
+      ctx.rotate(overlay.rotation);
       ctx.drawImage(
         overlay.image,
-        overlay.x,
-        overlay.y,
+        -overlay.width / 2,
+        -overlay.height / 2,
         overlay.width,
         overlay.height
       );
+      ctx.restore();
     });
   }
 
