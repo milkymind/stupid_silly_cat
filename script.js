@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedOverlay = null;
     let offsetX = 0;
     let offsetY = 0;
+    let mouseStartX = 0;
+    let mouseStartY = 0;
 
     // Function to handle image upload
     uploadInput.addEventListener('change', function(event) {
@@ -38,13 +40,22 @@ document.addEventListener('DOMContentLoaded', function() {
     function addOverlayToCanvas(overlayImageSrc) {
         const img = new Image();
         img.onload = function() {
-            overlays.push({ image: img, x: 50, y: 50, width: 100, height: 100 }); // Initial position and size
+            const overlay = {
+                image: img,
+                x: canvas.width / 2 - img.width / 2, // Center overlay initially
+                y: canvas.height / 2 - img.height / 2,
+                width: img.width,
+                height: img.height,
+                rotation: 0
+            };
+            overlays.push(overlay);
+            selectedOverlay = overlay;
             redrawCanvas();
         };
         img.src = overlayImageSrc;
     }
 
-    // Function to handle mouse down event on overlays for moving
+    // Function to handle mouse down event on overlays for resizing and rotating
     canvas.addEventListener('mousedown', function(event) {
         const mouseX = event.offsetX;
         const mouseY = event.offsetY;
@@ -52,34 +63,56 @@ document.addEventListener('DOMContentLoaded', function() {
         // Check if clicked inside any overlay
         for (let i = overlays.length - 1; i >= 0; i--) {
             const overlay = overlays[i];
-            if (mouseX >= overlay.x && mouseX <= overlay.x + overlay.width &&
-                mouseY >= overlay.y && mouseY <= overlay.y + overlay.height) {
+            if (isPointInsideOverlay(mouseX, mouseY, overlay)) {
                 selectedOverlay = overlay;
                 isDragging = true;
                 offsetX = mouseX - overlay.x;
                 offsetY = mouseY - overlay.y;
+
+                // Calculate rotation center point
+                const centerX = overlay.x + overlay.width / 2;
+                const centerY = overlay.y + overlay.height / 2;
+                const dx = mouseX - centerX;
+                const dy = mouseY - centerY;
+                overlay.rotation = Math.atan2(dy, dx);
+                mouseStartX = mouseX;
+                mouseStartY = mouseY;
                 break;
             }
         }
     });
 
-    // Function to handle mouse move event for moving overlays
+    // Function to handle mouse move event for resizing and rotating overlays
     canvas.addEventListener('mousemove', function(event) {
         const mouseX = event.offsetX;
         const mouseY = event.offsetY;
 
         if (isDragging && selectedOverlay) {
-            selectedOverlay.x = mouseX - offsetX;
-            selectedOverlay.y = mouseY - offsetY;
+            const dx = mouseX - mouseStartX;
+            const dy = mouseY - mouseStartY;
+            const newRotation = Math.atan2(dy, dx);
+            selectedOverlay.rotation += newRotation - selectedOverlay.rotation;
+
+            // Resize overlay based on mouse movement
+            const dxScale = (mouseX - selectedOverlay.x - offsetX) / selectedOverlay.width;
+            const dyScale = (mouseY - selectedOverlay.y - offsetY) / selectedOverlay.height;
+            selectedOverlay.width *= dxScale;
+            selectedOverlay.height *= dyScale;
             redrawCanvas();
         }
     });
 
-    // Function to handle mouse up event to stop moving overlays
+    // Function to handle mouse up event to stop resizing and rotating
     canvas.addEventListener('mouseup', function() {
         isDragging = false;
         selectedOverlay = null;
     });
+
+    // Function to check if a point is inside the boundaries of an overlay
+    function isPointInsideOverlay(x, y, overlay) {
+        return x >= overlay.x && x <= overlay.x + overlay.width &&
+            y >= overlay.y && y <= overlay.y + overlay.height;
+    }
 
     // Function to delete selected overlay
     function deleteSelectedOverlay() {
@@ -104,7 +137,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         overlays.forEach(function(overlay) {
-            ctx.drawImage(overlay.image, overlay.x, overlay.y, overlay.width, overlay.height);
+            ctx.save();
+            ctx.translate(overlay.x + overlay.width / 2, overlay.y + overlay.height / 2);
+            ctx.rotate(overlay.rotation);
+            ctx.drawImage(overlay.image, -overlay.width / 2, -overlay.height / 2, overlay.width, overlay.height);
+            ctx.restore();
         });
     }
 
