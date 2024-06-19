@@ -14,7 +14,7 @@ input[type="file"] {
 
 .carousel {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
     width: 100%;
     overflow-x: auto;
