@@ -9,6 +9,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const deleteButton = document.getElementById('deleteButton');
     let backgroundImage = null;
     let overlays = [];
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let selectedOverlay = null;
+    let offsetX = 0;
+    let offsetY = 0;
 
     // Function to handle image upload
     uploadInput.addEventListener('change', function(event) {
@@ -38,13 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
         img.src = overlayImageSrc;
     }
 
-    // Variables to handle resizing and rotating
-    let selectedOverlay = null;
-    let isDragging = false;
-    let dragStartX = 0;
-    let dragStartY = 0;
-
-    // Function to handle mouse down event on overlays for resizing and rotating
+    // Function to handle mouse down event on overlays for moving
     canvas.addEventListener('mousedown', function(event) {
         const mouseX = event.offsetX;
         const mouseY = event.offsetY;
@@ -56,28 +56,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 mouseY >= overlay.y && mouseY <= overlay.y + overlay.height) {
                 selectedOverlay = overlay;
                 isDragging = true;
-                dragStartX = mouseX - overlay.x;
-                dragStartY = mouseY - overlay.y;
+                offsetX = mouseX - overlay.x;
+                offsetY = mouseY - overlay.y;
                 break;
             }
         }
     });
 
-    // Function to handle mouse move event for resizing and rotating overlays
+    // Function to handle mouse move event for moving overlays
     canvas.addEventListener('mousemove', function(event) {
+        const mouseX = event.offsetX;
+        const mouseY = event.offsetY;
+
         if (isDragging && selectedOverlay) {
-            const mouseX = event.offsetX;
-            const mouseY = event.offsetY;
-
-            // Resize overlay based on mouse movement
-            selectedOverlay.width = mouseX - selectedOverlay.x;
-            selectedOverlay.height = mouseY - selectedOverlay.y;
-
+            selectedOverlay.x = mouseX - offsetX;
+            selectedOverlay.y = mouseY - offsetY;
             redrawCanvas();
         }
     });
 
-    // Function to handle mouse up event to stop resizing and rotating
+    // Function to handle mouse up event to stop moving overlays
     canvas.addEventListener('mouseup', function() {
         isDragging = false;
         selectedOverlay = null;
