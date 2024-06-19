@@ -32,9 +32,18 @@
         .hidden {
             display: none;
         }
-        .overlay-template {
+        .template-carousel {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .template-item {
+            margin: 0 10px;
+            cursor: pointer;
+        }
+        .template-item img {
             width: 50px;
-            cursor: move;
+            height: 50px;
         }
     </style>
 </head>
@@ -42,28 +51,32 @@
     <h1>Stupid Silly Cat Editor</h1>
     <div id="guide">
         <p>1. Upload Ordinal image file.</p>
-        <p>2. Select the laser beams you would like to add.</p>
+        <p>2. Drag and drop the laser beams you would like to add.</p>
         <p>3. Download your Silly looking Ordinal.</p>
     </div>
     <form id="upload-form">
         <label for="image-upload">Upload your image file:</label>
         <input type="file" id="image-upload" accept="image/*"><br><br>
-        
-        <label for="template-select">Choose an overlay template:</label>
-        <select id="template-select">
-            <option value="template1.png">Both Laser Beams</option>
-            <option value="template2.png">Left Laser Beam</option>
-            <option value="template3.png">Right Laser Beam</option>
-        </select><br><br>
-
-        <button type="button" onclick="addOverlay()">Add Overlay</button><br><br>
-        
-        <a id="download-link" class="hidden" download="customized-image.jpeg">Download Customized Image</a>
     </form>
 
     <div id="canvas-container">
         <div id="canvas"></div>
     </div>
+
+    <div class="template-carousel">
+        <div class="template-item" data-template="template1.png">
+            <img src="template1.png" alt="Both Laser Beams">
+        </div>
+        <div class="template-item" data-template="template2.png">
+            <img src="template2.png" alt="Left Laser Beam">
+        </div>
+        <div class="template-item" data-template="template3.png">
+            <img src="template3.png" alt="Right Laser Beam">
+        </div>
+    </div>
+
+    <br>
+    <button id="download-btn" class="hidden">Download Customized Image</button>
 
     <script src="https://cdn.jsdelivr.net/npm/konva@8.3.5/konva.min.js"></script>
     <script src="script.js"></script>
