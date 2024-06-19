@@ -10,19 +10,16 @@
     <div class="container">
         <h1>Stupid Silly Laser Eye Editor</h1>
         <p class="guide">
-            1. Upload Ordinal image file.<br>
+            1. Upload Original image file.<br>
             2. Select the laser beams you would like to add.<br>
-            3. Download your Silly looking Ordinal.
+            3. Download your Silly looking Original.
         </p>
         <input type="file" id="uploadInput" accept="image/*">
         <div id="templateCarousel" class="carousel">
             <!-- Template images will be added dynamically by JavaScript -->
         </div>
         <canvas id="imageCanvas" width="400" height="400"></canvas>
-        <div class="buttons">
-            <button id="downloadButton">Download Edited Image</button>
-            <button id="deleteButton">Delete Selected Overlay</button>
-        </div>
+        <button id="downloadButton">Download Edited Image</button>
     </div>
     <script src="script.js"></script>
 </body>
