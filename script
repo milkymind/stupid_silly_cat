@@ -1,6 +1,7 @@
 let stage;
 let layer;
 let backgroundImage;
+let templates = [];
 
 document.getElementById('image-upload').addEventListener('change', handleImageUpload);
 
@@ -12,6 +13,7 @@ function handleImageUpload(event) {
         const img = new Image();
         img.onload = function() {
             const canvasContainer = document.getElementById('canvas-container');
+            canvasContainer.innerHTML = ''; // Clear existing canvas
             const width = 400;
             const height = 400;
 
@@ -33,6 +35,7 @@ function handleImageUpload(event) {
             layer.add(backgroundImage);
             layer.draw();
 
+            // Show download button
             document.getElementById('download-btn').classList.remove('hidden');
         }
         img.src = e.target.result;
@@ -54,41 +57,34 @@ document.getElementById('canvas-container').addEventListener('dragover', functio
 document.getElementById('canvas-container').addEventListener('drop', function (e) {
     e.preventDefault();
     const templateSrc = e.dataTransfer.getData('templateSrc');
-    addOverlay(templateSrc, e.offsetX, e.offsetY);
+    const offsetX = e.offsetX;
+    const offsetY = e.offsetY;
+    addTemplate(templateSrc, offsetX, offsetY);
 });
 
-function addOverlay(templateSrc, x, y) {
+function addTemplate(templateSrc, x, y) {
     const templateImg = new Image();
-
-    templateImg.onload = function() {
-        const img = new Konva.Image({
-            image: templateImg,
+    templateImg.onload = function () {
+        const template = new Konva.Image({
             x: x,
             y: y,
+            image: templateImg,
             draggable: true
         });
 
-        const transformer = new Konva.Transformer();
-        layer.add(transformer);
-        layer.add(img);
-        transformer.attachTo(img);
-
-        img.on('transform', function () {
-            img.setAttrs({
-                width: img.width() * img.scaleX(),
-                height: img.height() * img.scaleY(),
+        template.on('transform', function () {
+            template.setAttrs({
+                width: template.width() * template.scaleX(),
+                height: template.height() * template.scaleY(),
                 scaleX: 1,
-                scaleY: 1,
+                scaleY: 1
             });
         });
 
-        img.on('click', () => {
-            transformer.nodes([img]);
-        });
-
+        layer.add(template);
+        templates.push(template);
         layer.draw();
-    }
-
+    };
     templateImg.src = templateSrc;
 }
 
