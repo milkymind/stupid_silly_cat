@@ -222,7 +222,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const templateImages = ["template1.png", "template2.png", "template3.png"];
 
   templateImages.forEach(function (template) {
-    console.log("test");
     const img = new Image();
     // img.crossOrigin = "anonymous";
     img.src = template;

@@ -1,11 +1,17 @@
+html {
+  overflow: scroll;
+}
 body {
     font-family: Arial, sans-serif;
+    color: white;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    background-color: #3b3b3b;
     height: 100vh;
     margin: 0;
+    overflow: scroll;
 }
 
 input[type="file"] {
@@ -17,9 +23,10 @@ input[type="file"] {
     justify-content: center;
     align-items: center;
     width: 100%;
-    overflow-x: auto;
+    /* overflow-x: auto; */
     white-space: nowrap;
     margin-bottom: 10px;
+    margin-top: 10px;
 }
 
 .carousel img {
@@ -28,6 +35,9 @@ input[type="file"] {
     margin: 0 5px;
 }
 
+.pad {
+  padding: 10px;
+}
 canvas {
     border: 1px solid #ccc;
     margin-top: 10px;

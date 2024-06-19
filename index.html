@@ -7,28 +7,37 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <input type="file" id="uploadInput" accept="image/*">
-    <div id="templateCarousel" class="carousel">
-        <!-- Template images will be added dynamically by JavaScript -->
-    </div>
-    <div id="editModes" class="carousel">
-      <label>
-        <input type="radio" name="editMode" id="positionButton" checked>
-        Position
-      </label>
-      <label>
-        <input type="radio" name="editMode" id="rotationButton">
-        Rotation
-      </label>
-      <label>
-        <input type="radio" name="editMode" id="scaleButton">
-        Scale
-      </label>
-    </div>
-    </div>
-    <canvas id="imageCanvas" width="400" height="400"></canvas>
-    <button id="downloadButton">Download Edited Image</button>
-    <button id="deleteButton">Delete Selected Overlay</button>
-    <script src="script.js"></script>
+  <div class="pad"></div>
+  <h1>Stupid Silly Laser Eye Editor</h1>
+  <p>Steps:<br>
+    1. Upload image file.<br>
+    2. Click the laser beams to add them to canvas.<br>
+    3. Edit laser beam position, rotation, and scale.<br>
+    4. Download your silly looking Ordinal.</p>
+  <input type="file" id="uploadInput" accept="image/*">
+  <div id="editModes" class="carousel">
+    <label>
+      <input type="radio" name="editMode" id="positionButton" checked>
+      Position
+    </label>
+    <label>
+      <input type="radio" name="editMode" id="rotationButton">
+      Rotation
+    </label>
+    <label>
+      <input type="radio" name="editMode" id="scaleButton">
+      Scale
+    </label>
+  </div>
+  </div>
+  <canvas id="imageCanvas" width="400" height="400"></canvas>
+  <div id="templateCarousel" class="carousel">
+    <!-- Template images will be added dynamically by JavaScript -->
+  </div>
+  <button id="downloadButton">Download Edited Image</button>
+  <button id="deleteButton">Delete Selected Overlay</button>
+  <div class="pad"></div>
+  <script src="script.js"></script>
+</body>
 </body>
 </html>
