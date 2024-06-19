@@ -3,32 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stupid Silly Cat Editor</title>
+    <title>Image Overlay Editor</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Stupid Silly Cat Editor</h1>
-    <div id="guide">
-        <p>1. Upload your image file.</p>
-        <p>2. Click on the canvas to add template images.</p>
-        <p>3. Drag from corners to resize templates.</p>
-        <p>4. Drag from center to rotate templates.</p>
-        <p>5. Click "Download Silly Image" to save.</p>
+    <input type="file" id="uploadInput" accept="image/*">
+    <div id="canvasContainer">
+        <canvas id="imageCanvas" width="400" height="400"></canvas>
     </div>
-
-    <input type="file" id="image-upload" accept="image/*"><br><br>
-
-    <div id="canvas-container">
-        <canvas id="canvas"></canvas>
+    <div id="templateCarousel">
+        <!-- Carousel of template overlay images -->
     </div>
+    <button id="downloadButton">Download Image</button>
 
-    <div id="template-carousel">
-        <!-- Template images will be dynamically added here -->
-    </div>
-
-    <button id="download-btn" class="hidden">Download Silly Image</button>
-
-    <script src="https://cdn.jsdelivr.net/npm/konva@8.3.5/konva.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
