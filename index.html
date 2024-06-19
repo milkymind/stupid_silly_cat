@@ -3,16 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Editor</title>
+    <title>Stupid Silly Laser Eye Editor</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
+        <h1>Stupid Silly Laser Eye Editor</h1>
+        <p class="guide">
+            1. Upload Ordinal image file.<br>
+            2. Select the laser beams you would like to add.<br>
+            3. Download your Silly looking Ordinal.
+        </p>
         <input type="file" id="uploadInput" accept="image/*">
-        <canvas id="imageCanvas" width="400" height="400"></canvas>
         <div id="templateCarousel" class="carousel">
             <!-- Template images will be added dynamically by JavaScript -->
         </div>
+        <canvas id="imageCanvas" width="400" height="400"></canvas>
         <div class="buttons">
             <button id="downloadButton">Download Edited Image</button>
             <button id="deleteButton">Delete Selected Overlay</button>
