@@ -1,114 +1,46 @@
+// script.js
 document.addEventListener('DOMContentLoaded', function() {
-    const stage = new Konva.Stage({
-        container: 'canvas',
-        width: 400,
-        height: 400
-    });
+    const canvas = document.getElementById('imageCanvas');
+    const ctx = canvas.getContext('2d');
+    const uploadInput = document.getElementById('uploadInput');
+    const templateCarousel = document.getElementById('templateCarousel');
+    const downloadButton = document.getElementById('downloadButton');
+    let backgroundImage = null;
+    let overlays = [];
 
-    const layer = new Konva.Layer();
-    stage.add(layer);
+    uploadInput.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
 
-    let uploadedImage;
-    let templates = [];
-
-    // Handle image upload
-    document.getElementById('image-upload').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file && file.type.startsWith('image')) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    if (uploadedImage) {
-                        uploadedImage.destroy(); // Remove any previous image
-                    }
-                    uploadedImage = new Konva.Image({
-                        image: img,
-                        x: 400,
-                        y: 400,
-                        width: stage.width(),
-                        height: stage.height()
-                    });
-                    layer.add(uploadedImage);
-                    layer.batchDraw();
-                    showDownloadButton();
-                };
-                img.src = e.target.result;
+        reader.onload = function(readerEvent) {
+            const img = new Image();
+            img.onload = function() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                backgroundImage = img;
             };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    // Add template images from carousel
-    const templateUrls = ['template1.png', 'template2.png', 'template3.png'];
-    const templateCarousel = document.getElementById('template-carousel');
-
-    templateUrls.forEach(url => {
-        const templateItem = document.createElement('div');
-        templateItem.classList.add('template-item');
-        templateItem.setAttribute('data-src', url);
-        const img = document.createElement('img');
-        img.src = url;
-        img.alt = url; // Set alt text as needed
-        templateItem.appendChild(img);
-        templateCarousel.appendChild(templateItem);
-    });
-
-    // Event listener for template items
-    document.querySelectorAll('.template-item').forEach(item => {
-        item.addEventListener('click', function() {
-            const templateSrc = item.getAttribute('data-src');
-            const mousePos = stage.getPointerPosition();
-            addTemplate(templateSrc, mousePos.x, mousePos.y);
-        });
-    });
-
-    // Function to add template image
-    function addTemplate(src, x, y) {
-        const templateImg = new Image();
-        templateImg.onload = function() {
-            const template = new Konva.Image({
-                x: x,
-                y: y,
-                image: templateImg,
-                draggable: true,
-                width: 100,
-                height: 100
-            });
-
-            // Resize template from corners
-            template.on('transform', function() {
-                const node = template;
-                const scaleX = node.scaleX();
-                const scaleY = node.scaleY();
-
-                node.width(node.width() * scaleX);
-                node.height(node.height() * scaleY);
-                node.scaleX(1);
-                node.scaleY(1);
-            });
-
-            layer.add(template);
-            templates.push(template);
-            layer.draw();
+            img.src = readerEvent.target.result;
         };
-        templateImg.src = src;
-    }
 
-    // Show download button when image is uploaded and templates are added
-    function showDownloadButton() {
-        const downloadBtn = document.getElementById('download-btn');
-        downloadBtn.style.display = 'block';
-    }
-
-    // Handle download button click
-    document.getElementById('download-btn').addEventListener('click', function() {
-        const dataURL = stage.toDataURL({ pixelRatio: 1, mimeType: 'image/jpeg', quality: 1 });
-        const link = document.createElement('a');
-        link.href = dataURL;
-        link.download = 'silly-image.jpeg';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        reader.readAsDataURL(file);
     });
+
+    // Function to add overlay from carousel to canvas
+    function addOverlayToCanvas(overlayImage) {
+        // Implement logic to add and manipulate overlays on canvas
+    }
+
+    // Function to handle user interactions with overlays (resize, rotate, etc.)
+    function handleOverlayManipulation() {
+        // Implement logic for resizing and rotating overlays
+    }
+
+    // Function to download the modified image
+    downloadButton.addEventListener('click', function() {
+        // Implement logic to prepare and download the final image
+    });
+
+    // Initialize the template carousel with overlay options
+    // This involves dynamically adding images to the carousel
+    // and attaching click event listeners to add them to the canvas
 });
