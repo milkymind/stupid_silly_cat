@@ -1,46 +1,26 @@
 // script.js
 
-document.addEventListener('DOMContentLoaded', function() {
-    const canvas = document.getElementById("imageCanvas");
-    const ctx = canvas.getContext("2d");
-    const uploadInput = document.getElementById("uploadInput");
-    const templateCarousel = document.getElementById("templateCarousel");
-    const downloadButton = document.getElementById("downloadButton");
-    const deleteButton = document.getElementById("deleteButton");
-    let backgroundImage = null;
-    let overlays = [];
-  
-    // Function to handle image upload
-    uploadInput.addEventListener("change", function (event) {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-  
-      reader.onload = function (readerEvent) {
-        const img = new Image();
-        img.onload = function () {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          backgroundImage = img;
-        };
-        img.src = readerEvent.target.result;
-      };
-  
-      reader.readAsDataURL(file);
-    });
-  
-    // Function to add overlay from carousel to canvas
-    function addOverlayToCanvas(overlayImageSrc, w, h) {
+document.addEventListener("DOMContentLoaded", function () {
+  const canvas = document.getElementById("imageCanvas");
+  const ctx = canvas.getContext("2d");
+  const uploadInput = document.getElementById("uploadInput");
+  const templateCarousel = document.getElementById("templateCarousel");
+  const downloadButton = document.getElementById("downloadButton");
+  const deleteButton = document.getElementById("deleteButton");
+  let backgroundImage = null;
+  let overlays = [];
+
+  // Function to handle image upload
+  uploadInput.addEventListener("change", function (event) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function (readerEvent) {
       const img = new Image();
       img.onload = function () {
-        overlays.push({
-          image: img,
-          x: 50,
-          y: 50,
-          width: w,
-          height: h,
-          rotation: 0,
-        }); // Initial position and size
-        redrawCanvas();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        backgroundImage = img;
       };
       img.src = readerEvent.target.result;
     };
@@ -188,6 +168,13 @@ document.addEventListener('DOMContentLoaded', function() {
     deleteSelectedOverlay();
   });
 
+  downloadButton.addEventListener("click", function () {
+    const link = document.createElement("a");
+    link.download = "image.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  });
+
   // Function to redraw the canvas with current background and overlays
   function redrawCanvas(includeSelected = true) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -220,63 +207,10 @@ document.addEventListener('DOMContentLoaded', function() {
       );
       ctx.restore();
     });
-  
-    // Function to handle mouse move event for resizing and rotating overlays
-    canvas.addEventListener("mousemove", function (event) {
-      if (isDragging && selectedOverlay) {
-        const mouseX = event.offsetX;
-        const mouseY = event.offsetY;
-  
-        // Depending on edit state, perform different actions
-        if (editState === EditState.POSITION) {
-          selectedOverlay.x =
-            selectedOverlay.x + (mouseX - dragStartX) - selectedOverlay.width / 2;
-          selectedOverlay.y =
-            selectedOverlay.y +
-            (mouseY - dragStartY) -
-            selectedOverlay.height / 2;
-        } else if (editState === EditState.ROTATION) {
-          const centerX = selectedOverlay.x + selectedOverlay.width / 2;
-          const centerY = selectedOverlay.y + selectedOverlay.height / 2;
-          const angle = Math.atan2(mouseY - centerY, mouseX - centerX);
-          selectedOverlay.rotation = angle; // * (180 / Math.PI);
-        } else if (editState === EditState.SCALE) {
-          selectedOverlay.width = mouseX - selectedOverlay.x;
-          selectedOverlay.height = mouseY - selectedOverlay.y;
-        }
-  
-        redrawCanvas();
-      }
-    });
-  
-    // Function to handle mouse up event to stop resizing and rotating
-    canvas.addEventListener("mouseup", function () {
-      isDragging = false;
-      // selectedOverlay = null;
-      redrawCanvas();
-    });
-  
-    // Function to delete selected overlay
-    function deleteSelectedOverlay() {
-      if (selectedOverlay) {
-        const index = overlays.indexOf(selectedOverlay);
-        overlays.splice(index, 1);
-        selectedOverlay = null;
-        redrawCanvas();
-      }
-    }
-
-    redrawCanvas(false);
-
-    // Trigger download of the final image
-    const downloadLink = document.createElement("a");
-    downloadLink.download = "edited_image.png";
-    downloadLink.href = canvas.toDataURL("image/png");
-    downloadLink.click();
-  });
+  }
 
   // Initialize the template carousel with overlay options
-  const templateImages = ["template1.png", "template2.png", "template3.png"];
+  const templateImages = ["template2.png", "template3.png"];
 
   templateImages.forEach(function (template) {
     const img = new Image();
@@ -290,4 +224,4 @@ document.addEventListener('DOMContentLoaded', function() {
       addOverlayToCanvas(img.src, img.width, img.height);
     });
   });
-  
+});
