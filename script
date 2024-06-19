@@ -33,6 +33,8 @@ function handleImageUpload(event) {
 
             layer.add(backgroundImage);
             layer.draw();
+
+            document.getElementById('download-btn').classList.remove('hidden');
         }
         img.src = e.target.result;
     }
@@ -40,9 +42,23 @@ function handleImageUpload(event) {
     reader.readAsDataURL(file);
 }
 
-function addOverlay() {
-    const templateSelect = document.getElementById('template-select');
-    const templateSrc = templateSelect.value;
+document.querySelectorAll('.template-item').forEach(item => {
+    item.addEventListener('dragstart', function (e) {
+        e.dataTransfer.setData('templateSrc', e.target.dataset.template);
+    });
+});
+
+document.getElementById('canvas-container').addEventListener('dragover', function (e) {
+    e.preventDefault();
+});
+
+document.getElementById('canvas-container').addEventListener('drop', function (e) {
+    e.preventDefault();
+    const templateSrc = e.dataTransfer.getData('templateSrc');
+    addOverlay(templateSrc);
+});
+
+function addOverlay(templateSrc) {
     const templateImg = new Image();
 
     templateImg.onload = function() {
@@ -72,7 +88,7 @@ function addOverlay() {
     templateImg.src = templateSrc;
 }
 
-document.getElementById('download-link').addEventListener('click', function () {
+document.getElementById('download-btn').addEventListener('click', function () {
     const dataURL = stage.toDataURL({ pixelRatio: 1 });
     const link = document.createElement('a');
     link.href = dataURL;
