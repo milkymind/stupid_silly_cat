@@ -19,16 +19,18 @@ document.addEventListener('DOMContentLoaded', function() {
             reader.onload = function(e) {
                 const img = new Image();
                 img.onload = function() {
-                    const image = new Konva.Image({
+                    if (uploadedImage) {
+                        uploadedImage.destroy(); // Remove any previous image
+                    }
+                    uploadedImage = new Konva.Image({
                         image: img,
                         x: 0,
                         y: 0,
-                        width: 400,
-                        height: 400
+                        width: stage.width(),
+                        height: stage.height()
                     });
-                    layer.add(image);
-                    layer.draw();
-                    uploadedImage = image;
+                    layer.add(uploadedImage);
+                    layer.batchDraw();
                     showDownloadButton();
                 };
                 img.src = e.target.result;
@@ -38,6 +40,21 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Add template images from carousel
+    const templateUrls = ['template1.png', 'template2.png', 'template3.png'];
+    const templateCarousel = document.getElementById('template-carousel');
+
+    templateUrls.forEach(url => {
+        const templateItem = document.createElement('div');
+        templateItem.classList.add('template-item');
+        templateItem.setAttribute('data-src', url);
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = url; // Set alt text as needed
+        templateItem.appendChild(img);
+        templateCarousel.appendChild(templateItem);
+    });
+
+    // Event listener for template items
     document.querySelectorAll('.template-item').forEach(item => {
         item.addEventListener('click', function() {
             const templateSrc = item.getAttribute('data-src');
