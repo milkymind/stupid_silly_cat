@@ -17,7 +17,7 @@ function handleImageUpload(event) {
             const height = 400;
 
             stage = new Konva.Stage({
-                container: 'canvas',
+                container: 'canvas-container',
                 width: width,
                 height: height
             });
@@ -43,19 +43,10 @@ function handleImageUpload(event) {
 }
 
 document.querySelectorAll('.template-item').forEach(item => {
-    item.addEventListener('dragstart', function (e) {
-        e.dataTransfer.setData('templateSrc', e.target.dataset.template);
+    item.addEventListener('click', function () {
+        const templateSrc = item.dataset.template;
+        addOverlay(templateSrc);
     });
-});
-
-document.getElementById('canvas-container').addEventListener('dragover', function (e) {
-    e.preventDefault();
-});
-
-document.getElementById('canvas-container').addEventListener('drop', function (e) {
-    e.preventDefault();
-    const templateSrc = e.dataTransfer.getData('templateSrc');
-    addOverlay(templateSrc);
 });
 
 function addOverlay(templateSrc) {
@@ -68,9 +59,14 @@ function addOverlay(templateSrc) {
         });
 
         // Add transformers
-        const transformer = new Konva.Transformer();
+        const transformer = new Konva.Transformer({
+            rotateEnabled: true,
+            resizeEnabled: true,
+            keepRatio: false
+        });
         layer.add(transformer);
-        transformer.attachTo(img);
+        layer.add(img);
+        transformer.nodes([img]);
 
         img.on('transform', function () {
             img.setAttrs({
@@ -81,7 +77,10 @@ function addOverlay(templateSrc) {
             });
         });
 
-        layer.add(img);
+        img.on('click', () => {
+            transformer.nodes([img]);
+        });
+
         layer.draw();
     }
 
