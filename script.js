@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const uploadInput = document.getElementById('uploadInput');
     const templateCarousel = document.getElementById('templateCarousel');
     const downloadButton = document.getElementById('downloadButton');
-    const deleteButton = document.getElementById('deleteButton');
     let backgroundImage = null;
     let overlays = [];
     let isDragging = false;
@@ -113,21 +112,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return x >= overlay.x && x <= overlay.x + overlay.width &&
             y >= overlay.y && y <= overlay.y + overlay.height;
     }
-
-    // Function to delete selected overlay
-    function deleteSelectedOverlay() {
-        if (selectedOverlay) {
-            const index = overlays.indexOf(selectedOverlay);
-            overlays.splice(index, 1);
-            selectedOverlay = null;
-            redrawCanvas();
-        }
-    }
-
-    // Example: Implement a delete button for overlays
-    deleteButton.addEventListener('click', function() {
-        deleteSelectedOverlay();
-    });
 
     // Function to redraw the canvas with current background and overlays
     function redrawCanvas() {
