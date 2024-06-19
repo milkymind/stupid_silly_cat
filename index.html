@@ -21,6 +21,7 @@
         }
         #guide {
             margin-bottom: 20px;
+            text-align: center;
         }
         #canvas-container {
             position: relative;
@@ -28,8 +29,9 @@
             background-color: #ffffff;
             width: 400px;
             height: 400px;
+            margin-top: 20px;
         }
-        .template-carousel {
+        #template-container {
             display: flex;
             justify-content: center;
             margin-top: 20px;
@@ -41,43 +43,51 @@
         .template-item img {
             width: 50px;
             height: 50px;
+            cursor: pointer;
         }
         #download-btn {
             margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: none;
+        }
+        #download-btn:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
 <body>
     <h1>Stupid Silly Cat Editor</h1>
     <div id="guide">
-        <p>1. Upload Ordinal image file.</p>
-        <p>2. Drag and drop the laser beams you would like to add.</p>
-        <p>3. Download your Silly looking Ordinal.</p>
+        <p>1. Upload your image file.</p>
+        <p>2. Drag and drop templates onto the image.</p>
+        <p>3. Adjust size and position of templates.</p>
+        <p>4. Click "Download Silly Image" to save.</p>
     </div>
-    <form id="upload-form">
-        <label for="image-upload">Upload your image file:</label>
-        <input type="file" id="image-upload" accept="image/*"><br><br>
-    </form>
+
+    <input type="file" id="image-upload" accept="image/*"><br><br>
 
     <div id="canvas-container">
-        <div id="canvas"></div>
+        <canvas id="canvas"></canvas>
     </div>
 
-    <div class="template-carousel">
-        <div class="template-item" data-template="template1.png">
-            <img src="template1.png" alt="Both Laser Beams" draggable="true">
+    <div id="template-container">
+        <div class="template-item">
+            <img src="template1.png" alt="Both Laser Beams">
         </div>
-        <div class="template-item" data-template="template2.png">
-            <img src="template2.png" alt="Left Laser Beam" draggable="true">
+        <div class="template-item">
+            <img src="template2.png" alt="Left Laser Beam">
         </div>
-        <div class="template-item" data-template="template3.png">
-            <img src="template3.png" alt="Right Laser Beam" draggable="true">
+        <div class="template-item">
+            <img src="template3.png" alt="Right Laser Beam">
         </div>
     </div>
 
-    <button id="download-btn" class="hidden">Download Silly Image</button>
+    <button id="download-btn">Download Silly Image</button>
 
-    <script src="https://cdn.jsdelivr.net/npm/konva@8.3.5/konva.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
