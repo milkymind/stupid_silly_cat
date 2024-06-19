@@ -1,72 +1,97 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #2e2e2e;
-    color: #f1f1f1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
-}
+document.addEventListener('DOMContentLoaded', function() {
+    const stage = new Konva.Stage({
+        container: 'canvas',
+        width: 400,
+        height: 400
+    });
 
-h1 {
-    margin-bottom: 20px;
-}
+    const layer = new Konva.Layer();
+    stage.add(layer);
 
-#guide {
-    margin-bottom: 20px;
-    text-align: center;
-}
+    let uploadedImage;
+    let templates = [];
 
-#canvas-container {
-    position: relative;
-    width: 400px;
-    height: 400px;
-    background-color: #ffffff;
-    border: 1px solid #ccc;
-}
+    // Handle image upload
+    document.getElementById('image-upload').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file && file.type.startsWith('image')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const image = new Konva.Image({
+                        image: img,
+                        x: 0,
+                        y: 0,
+                        width: 400,
+                        height: 400
+                    });
+                    layer.add(image);
+                    layer.draw();
+                    uploadedImage = image;
+                    showDownloadButton();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
 
-#canvas-wrapper {
-    width: 100%;
-    height: 100%;
-}
+    // Add template images from carousel
+    document.querySelectorAll('.template-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const templateSrc = item.getAttribute('data-src');
+            const mousePos = stage.getPointerPosition();
+            addTemplate(templateSrc, mousePos.x, mousePos.y);
+        });
+    });
 
-canvas {
-    cursor: pointer;
-}
+    // Function to add template image
+    function addTemplate(src, x, y) {
+        const templateImg = new Image();
+        templateImg.onload = function() {
+            const template = new Konva.Image({
+                x: x,
+                y: y,
+                image: templateImg,
+                draggable: true,
+                width: 100,
+                height: 100
+            });
 
-#template-carousel {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
+            // Resize template from corners
+            template.on('transform', function() {
+                const node = template;
+                const scaleX = node.scaleX();
+                const scaleY = node.scaleY();
 
-.template-item {
-    margin: 0 10px;
-    cursor: pointer;
-}
+                node.width(node.width() * scaleX);
+                node.height(node.height() * scaleY);
+                node.scaleX(1);
+                node.scaleY(1);
+            });
 
-.template-item img {
-    width: 50px;
-    height: 50px;
-    cursor: pointer;
-}
+            layer.add(template);
+            templates.push(template);
+            layer.draw();
+        };
+        templateImg.src = src;
+    }
 
-#download-btn {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-    display: none;
-}
+    // Show download button when image is uploaded and templates are added
+    function showDownloadButton() {
+        const downloadBtn = document.getElementById('download-btn');
+        downloadBtn.style.display = 'block';
+    }
 
-#download-btn:hover {
-    background-color: #45a049;
-}
-
-.hidden {
-    display: none;
-}
+    // Handle download button click
+    document.getElementById('download-btn').addEventListener('click', function() {
+        const dataURL = stage.toDataURL({ pixelRatio: 1, mimeType: 'image/jpeg', quality: 1 });
+        const link = document.createElement('a');
+        link.href = dataURL;
+        link.download = 'silly-image.jpeg';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+});
