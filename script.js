@@ -224,6 +224,7 @@ document.addEventListener('DOMContentLoaded', function() {
   templateImages.forEach(function (template) {
     console.log("test");
     const img = new Image();
+    // img.crossOrigin = "anonymous";
     img.src = template;
     img.onload = function () {
       templateCarousel.appendChild(img);
