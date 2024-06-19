@@ -1,99 +1,69 @@
-let stage;
-let layer;
-let backgroundImage;
-let templates = [];
+document.addEventListener('DOMContentLoaded', function() {
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const templateContainer = document.getElementById('template-container');
+    let uploadedImage;
 
-document.getElementById('image-upload').addEventListener('change', handleImageUpload);
-
-function handleImageUpload(event) {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-    
-    reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-            const canvasContainer = document.getElementById('canvas-container');
-            canvasContainer.innerHTML = ''; // Clear existing canvas
-            const width = 400;
-            const height = 400;
-
-            stage = new Konva.Stage({
-                container: 'canvas-container',
-                width: width,
-                height: height
-            });
-
-            layer = new Konva.Layer();
-            stage.add(layer);
-
-            backgroundImage = new Konva.Image({
-                image: img,
-                width: width,
-                height: height
-            });
-
-            layer.add(backgroundImage);
-            layer.draw();
-
-            // Show download button
-            document.getElementById('download-btn').classList.remove('hidden');
+    // Handle image upload
+    document.getElementById('image-upload').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file && file.type.startsWith('image')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    canvas.width = 400;
+                    canvas.height = 400;
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    uploadedImage = img;
+                    showDownloadButton();
+                }
+                img.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
         }
-        img.src = e.target.result;
-    }
-    
-    reader.readAsDataURL(file);
-}
-
-document.querySelectorAll('.template-item img').forEach(item => {
-    item.addEventListener('dragstart', function (e) {
-        e.dataTransfer.setData('templateSrc', e.target.src);
     });
-});
 
-document.getElementById('canvas-container').addEventListener('dragover', function (e) {
-    e.preventDefault();
-});
+    // Enable templates to be draggable
+    templateContainer.addEventListener('dragstart', function(e) {
+        const templateSrc = e.target.getAttribute('src');
+        e.dataTransfer.setData('text/plain', templateSrc);
+    });
 
-document.getElementById('canvas-container').addEventListener('drop', function (e) {
-    e.preventDefault();
-    const templateSrc = e.dataTransfer.getData('templateSrc');
-    const offsetX = e.offsetX;
-    const offsetY = e.offsetY;
-    addTemplate(templateSrc, offsetX, offsetY);
-});
+    // Prevent default behavior for drag events
+    templateContainer.addEventListener('dragover', function(e) {
+        e.preventDefault();
+    });
 
-function addTemplate(templateSrc, x, y) {
-    const templateImg = new Image();
-    templateImg.onload = function () {
-        const template = new Konva.Image({
-            x: x,
-            y: y,
-            image: templateImg,
-            draggable: true
-        });
+    // Handle drop event on canvas
+    canvas.addEventListener('drop', function(e) {
+        e.preventDefault();
+        const templateSrc = e.dataTransfer.getData('text/plain');
+        const offsetX = e.offsetX - 25; // Adjust for template size
+        const offsetY = e.offsetY - 25; // Adjust for template size
 
-        template.on('transform', function () {
-            template.setAttrs({
-                width: template.width() * template.scaleX(),
-                height: template.height() * template.scaleY(),
-                scaleX: 1,
-                scaleY: 1
-            });
-        });
+        const templateImg = new Image();
+        templateImg.onload = function() {
+            ctx.drawImage(templateImg, offsetX, offsetY, 50, 50); // Draw template on canvas
+        };
+        templateImg.src = templateSrc;
+    });
 
-        layer.add(template);
-        templates.push(template);
-        layer.draw();
-    };
-    templateImg.src = templateSrc;
-}
+    // Show download button when image is uploaded and templates are added
+    function showDownloadButton() {
+        const downloadBtn = document.getElementById('download-btn');
+        downloadBtn.style.display = 'block';
+    }
 
-document.getElementById('download-btn').addEventListener('click', function () {
-    const dataURL = stage.toDataURL({ pixelRatio: 1 });
-    const link = document.createElement('a');
-    link.href = dataURL;
-    link.download = 'customized-image.jpeg';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Handle download button click
+    document.getElementById('download-btn').addEventListener('click', function() {
+        const dataURL = canvas.toDataURL('image/jpeg');
+        const link = document.createElement('a');
+        link.href = dataURL;
+        link.download = 'silly-image.jpeg';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
 });
