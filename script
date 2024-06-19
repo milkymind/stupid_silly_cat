@@ -1,0 +1,53 @@
+document.getElementById('image-upload').addEventListener('change', handleImageUpload);
+
+function handleImageUpload(event) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+            document.getElementById('canvas').classList.remove('hidden');
+        }
+        img.src = e.target.result;
+    }
+    
+    reader.readAsDataURL(file);
+}
+
+function applyOverlay() {
+    const templateSelect = document.getElementById('template-select');
+    const templateSrc = templateSelect.value;
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const resizeFactor = document.getElementById('resize-range').value / 100;
+    const rotationDegrees = document.getElementById('rotate-range').value;
+    const templateImg = new Image();
+
+    templateImg.onload = function() {
+        const width = templateImg.width * resizeFactor;
+        const height = templateImg.height * resizeFactor;
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+        ctx.drawImage(templateImg, centerX - width / 2, centerY - height / 2, width, height);
+        
+        // Apply rotation
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate((rotationDegrees * Math.PI) / 180);
+        ctx.drawImage(templateImg, -width / 2, -height / 2, width, height);
+        ctx.restore();
+
+        document.getElementById('download-link').href = canvas.toDataURL('image/jpeg');
+        document.getElementById('download-link').classList.remove('hidden');
+    }
+
+    templateImg.src = templateSrc;
+}
