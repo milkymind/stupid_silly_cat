@@ -24,8 +24,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     uploadedImage = new Konva.Image({
                         image: img,
-                        x: 0,
-                        y: 0,
+                        x: 400,
+                        y: 400,
                         width: stage.width(),
                         height: stage.height()
                     });
