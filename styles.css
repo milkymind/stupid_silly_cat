@@ -1,5 +1,6 @@
 body {
     font-family: Arial, sans-serif;
+    background-color: #f0f0f0; /* Matched the background color of this chat */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -9,6 +10,15 @@ body {
 
 .container {
     text-align: center;
+}
+
+h1 {
+    margin-bottom: 10px;
+}
+
+.guide {
+    font-size: 14px;
+    margin-bottom: 20px;
 }
 
 input[type="file"] {
