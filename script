@@ -9,9 +9,14 @@ function handleImageUpload(event) {
         img.onload = function() {
             const canvas = document.getElementById('canvas');
             const ctx = canvas.getContext('2d');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
+
+            // Resize and center the image on the canvas
+            const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
+            const x = (canvas.width / 2) - (img.width / 2) * scale;
+            const y = (canvas.height / 2) - (img.height / 2) * scale;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+
             document.getElementById('canvas').classList.remove('hidden');
         }
         img.src = e.target.result;
@@ -35,18 +40,28 @@ function applyOverlay() {
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
-        ctx.drawImage(templateImg, centerX - width / 2, centerY - height / 2, width, height);
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height); 
         
-        // Apply rotation
-        ctx.save();
-        ctx.translate(centerX, centerY);
-        ctx.rotate((rotationDegrees * Math.PI) / 180);
-        ctx.drawImage(templateImg, -width / 2, -height / 2, width, height);
-        ctx.restore();
+        // Redraw the base image
+        const baseImg = new Image();
+        baseImg.onload = function() {
+            const scale = Math.min(canvas.width / baseImg.width, canvas.height / baseImg.height);
+            const x = (canvas.width / 2) - (baseImg.width / 2) * scale;
+            const y = (canvas.height / 2) - (baseImg.height / 2) * scale;
+            ctx.drawImage(baseImg, x, y, baseImg.width * scale, baseImg.height * scale);
 
-        document.getElementById('download-link').href = canvas.toDataURL('image/jpeg');
-        document.getElementById('download-link').classList.remove('hidden');
+            // Apply rotation and overlay template image
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate((rotationDegrees * Math.PI) / 180);
+            ctx.drawImage(templateImg, -width / 2, -height / 2, width, height);
+            ctx.restore();
+    
+            document.getElementById('download-link').href = canvas.toDataURL('image/jpeg');
+            document.getElementById('download-link').classList.remove('hidden');
+        }
+        baseImg.src = document.getElementById('image-upload').files[0].result;
     }
 
     templateImg.src = templateSrc;
