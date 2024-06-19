@@ -29,15 +29,15 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // Function to add overlay from carousel to canvas
-  function addOverlayToCanvas(overlayImageSrc) {
+  function addOverlayToCanvas(overlayImageSrc, w, h) {
     const img = new Image();
     img.onload = function () {
       overlays.push({
         image: img,
         x: 50,
         y: 50,
-        width: 100,
-        height: 100,
+        width: w,
+        height: h,
         rotation: 0,
       }); // Initial position and size
       redrawCanvas();
@@ -106,6 +106,11 @@ document.addEventListener('DOMContentLoaded', function() {
         break;
       }
     }
+
+    // If we aren't dragging, deselect the overlay
+    if (!isDragging) {
+      selectedOverlay = null;
+    }
   });
 
   // Function to handle mouse move event for resizing and rotating overlays
@@ -116,8 +121,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
       // Depending on edit state, perform different actions
       if (editState === EditState.POSITION) {
-        selectedOverlay.x = mouseX - dragStartX;
-        selectedOverlay.y = mouseY - dragStartY;
+        selectedOverlay.x =
+          selectedOverlay.x + (mouseX - dragStartX) - selectedOverlay.width / 2;
+        selectedOverlay.y =
+          selectedOverlay.y +
+          (mouseY - dragStartY) -
+          selectedOverlay.height / 2;
       } else if (editState === EditState.ROTATION) {
         const centerX = selectedOverlay.x + selectedOverlay.width / 2;
         const centerY = selectedOverlay.y + selectedOverlay.height / 2;
@@ -135,7 +144,8 @@ document.addEventListener('DOMContentLoaded', function() {
   // Function to handle mouse up event to stop resizing and rotating
   canvas.addEventListener("mouseup", function () {
     isDragging = false;
-    selectedOverlay = null;
+    // selectedOverlay = null;
+    redrawCanvas();
   });
 
   // Function to delete selected overlay
@@ -154,13 +164,22 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // Function to redraw the canvas with current background and overlays
-  function redrawCanvas() {
+  function redrawCanvas(includeSelected = true) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (backgroundImage) {
       ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
     }
 
     overlays.forEach(function (overlay) {
+      // Draw a square around the selected overlay
+      if (includeSelected && overlay === selectedOverlay) {
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.rect(overlay.x, overlay.y, overlay.width, overlay.height);
+        ctx.stroke();
+      }
+
       ctx.save();
       ctx.translate(
         overlay.x + overlay.width / 2,
@@ -185,7 +204,7 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
-    redrawCanvas();
+    redrawCanvas(false);
 
     // Trigger download of the final image
     const downloadLink = document.createElement("a");
@@ -206,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     img.addEventListener("click", function () {
-      addOverlayToCanvas(img.src);
+      addOverlayToCanvas(img.src, img.width, img.height);
     });
   });
 });
