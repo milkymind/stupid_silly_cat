@@ -39,8 +39,8 @@
         <p>3. Download your Silly looking Ordinal.</p>
     </div>
     <form id="upload-form">
-        <label for="image-upload">Upload your JPEG file:</label>
-        <input type="file" id="image-upload" accept="image/jpeg"><br><br>
+        <label for="image-upload">Upload your image file:</label>
+        <input type="file" id="image-upload" accept="image/*"><br><br>
         
         <label for="template-select">Choose an overlay template:</label>
         <select id="template-select">
@@ -60,7 +60,7 @@
         <a id="download-link" class="hidden" download="customized-image.jpeg">Download Customized Image</a>
     </form>
 
-    <canvas id="canvas" class="hidden"></canvas>
+    <canvas id="canvas" class="hidden" width="400" height="400"></canvas>
 
     <script src="script.js"></script>
 </body>
