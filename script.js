@@ -50,6 +50,8 @@ document.addEventListener('DOMContentLoaded', function() {
   let isDragging = false;
   let dragStartX = 0;
   let dragStartY = 0;
+  let dragAngleStartOverlay = 0;
+  let dragAngleStartMouse = 0;
   const EditState = {
     ROTATION: "rotation",
     POSITION: "position",
@@ -101,6 +103,10 @@ document.addEventListener('DOMContentLoaded', function() {
       ) {
         selectedOverlay = overlay;
         isDragging = true;
+        dragAngleStartOverlay = overlay.rotation;
+        const centerX = selectedOverlay.x + selectedOverlay.width / 2;
+        const centerY = selectedOverlay.y + selectedOverlay.height / 2;
+        dragAngleStartMouse = Math.atan2(mouseY - centerY, mouseX - centerX);
         dragStartX = mouseX - overlay.x;
         dragStartY = mouseY - overlay.y;
         break;
@@ -121,17 +127,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
       // Depending on edit state, perform different actions
       if (editState === EditState.POSITION) {
-        selectedOverlay.x =
-          selectedOverlay.x + (mouseX - dragStartX) - selectedOverlay.width / 2;
-        selectedOverlay.y =
-          selectedOverlay.y +
-          (mouseY - dragStartY) -
-          selectedOverlay.height / 2;
+        selectedOverlay.x = mouseX - dragStartX;
+        selectedOverlay.y = mouseY - dragStartY;
       } else if (editState === EditState.ROTATION) {
         const centerX = selectedOverlay.x + selectedOverlay.width / 2;
         const centerY = selectedOverlay.y + selectedOverlay.height / 2;
-        const angle = Math.atan2(mouseY - centerY, mouseX - centerX);
-        selectedOverlay.rotation = angle; // * (180 / Math.PI);
+        const angle =
+          dragAngleStartOverlay +
+          Math.atan2(mouseY - centerY, mouseX - centerX) -
+          dragAngleStartMouse;
+        selectedOverlay.rotation = angle;
       } else if (editState === EditState.SCALE) {
         selectedOverlay.width = mouseX - selectedOverlay.x;
         selectedOverlay.height = mouseY - selectedOverlay.y;
