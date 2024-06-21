@@ -18,6 +18,8 @@ document.addEventListener("DOMContentLoaded", function () {
     reader.onload = function (readerEvent) {
       const img = new Image();
       img.onload = function () {
+        canvas.width = img.width;
+        canvas.height = img.height;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         backgroundImage = img;
