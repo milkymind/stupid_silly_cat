@@ -55,12 +55,19 @@ canvas {
     margin-right: auto;
 }
 
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+}
+
 button {
     margin-top: 10px;
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
-    max-width: 100%; /* Ensure buttons don't overflow */
+    flex: 0 1 auto; /* Allow buttons to shrink if needed */
 }
 
 @media screen and (max-width: 768px) {
@@ -72,9 +79,13 @@ button {
         max-width: 80px; /* Slightly smaller images on mobile */
     }
 
-    button {
-        padding: 8px 16px; /* Slightly smaller buttons on mobile */
-        font-size: 14px;
+    .button-container {
+        flex-direction: column;
+    }
+
+    .button-container button {
+        width: 100%; /* Full-width buttons on very small screens */
+        margin-top: 5px;
     }
 }
 
@@ -89,7 +100,11 @@ button {
         margin: 5px;
     }
 
-    button {
+    .button-container {
+        flex-direction: column;
+    }
+
+    .button-container button {
         width: 100%; /* Full-width buttons on very small screens */
         margin-top: 5px;
     }
