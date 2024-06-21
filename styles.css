@@ -1,21 +1,23 @@
 html {
-  overflow: scroll;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 body {
     font-family: Arial, sans-serif;
-    color: white;
+    color: rgb(11, 10, 10);
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    background-color: #3b3b3b;
-    height: 100vh;
+    justify-content: flex-start; /* Changed from center to allow scrolling */
+    background-color: #faf6f6;
+    min-height: 100vh; /* Changed from height to min-height */
     margin: 0;
-    overflow: scroll;
+    padding: 20px; /* Add some padding */
+    box-sizing: border-box;
 }
 
 input[type="file"] {
     margin-top: 10px;
+    max-width: 100%; 
       /* margin-bottom: 10px; */
 }
 
@@ -24,6 +26,7 @@ input[type="file"] {
     justify-content: center;
     align-items: center;
     width: 100%;
+    height: auto;
     /* overflow-x: auto; */
     white-space: nowrap;
     margin-bottom: 10px;
@@ -32,6 +35,7 @@ input[type="file"] {
 
 .carousel img {
     max-width: 100px;
+    height: auto;
     cursor: pointer;
     margin: 0 5px;
 }
@@ -40,9 +44,15 @@ input[type="file"] {
     padding: 10px;
 }
 
+
 canvas {
     border: 1px solid #ccc;
     margin-top: 10px;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 button {
@@ -50,4 +60,37 @@ button {
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
+    max-width: 100%; /* Ensure buttons don't overflow */
+}
+
+@media screen and (max-width: 768px) {
+    body {
+        padding: 10px; /* Reduce padding on smaller screens */
+    }
+
+    .carousel img {
+        max-width: 80px; /* Slightly smaller images on mobile */
+    }
+
+    button {
+        padding: 8px 16px; /* Slightly smaller buttons on mobile */
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .carousel {
+        flex-wrap: wrap; /* Allow wrapping on very small screens */
+        justify-content: flex-start;
+    }
+
+    .carousel img {
+        max-width: 60px; /* Even smaller images on very small screens */
+        margin: 5px;
+    }
+
+    button {
+        width: 100%; /* Full-width buttons on very small screens */
+        margin-top: 5px;
+    }
 }
