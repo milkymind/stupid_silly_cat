@@ -36,8 +36,8 @@ document.addEventListener("DOMContentLoaded", function () {
     img.onload = function () {
       overlays.push({
         image: img,
-        x: 50,
-        y: 50,
+        x: 0,
+        y: 0,
         width: w,
         height: h,
         rotation: 0,
@@ -94,9 +94,54 @@ document.addEventListener("DOMContentLoaded", function () {
     const mouseX = event.offsetX;
     const mouseY = event.offsetY;
 
+    console.log("mouse down event :>>>>>>>>>>>>> ");
+    console.log("mouseX :>> ", mouseX);
+    console.log("mouseY :>> ", mouseY);
     // Check if clicked inside any overlay
     for (let i = overlays.length - 1; i >= 0; i--) {
       const overlay = overlays[i];
+      if (
+        mouseX >= overlay.x &&
+        mouseX <= overlay.x + overlay.width &&
+        mouseY >= overlay.y &&
+        mouseY <= overlay.y + overlay.height
+      ) {
+        selectedOverlay = overlay;
+        isDragging = true;
+        dragAngleStartOverlay = overlay.rotation;
+        const centerX = selectedOverlay.x + selectedOverlay.width / 2;
+        const centerY = selectedOverlay.y + selectedOverlay.height / 2;
+        dragAngleStartMouse = Math.atan2(mouseY - centerY, mouseX - centerX);
+        dragStartX = mouseX - overlay.x;
+        dragStartY = mouseY - overlay.y;
+        break;
+      }
+    }
+
+    // If we aren't dragging, deselect the overlay
+    if (!isDragging) {
+      selectedOverlay = null;
+    }
+  });
+
+  // Function to handle mouse down event on overlays for resizing and rotating
+  canvas.addEventListener("touchstart", function (event) {
+    const rect = canvas.getBoundingClientRect();
+
+    console.log("touch start event :>>>>>>>>>> ");
+    const mouseX = event.touches[0].clientX - rect.left;
+    const mouseY = event.touches[0].clientY - rect.top;
+
+    console.log("mouseX :>> ", mouseX);
+    console.log("mouseY :>> ", mouseY);
+
+    // Check if clicked inside any overlay
+    for (let i = overlays.length - 1; i >= 0; i--) {
+      const overlay = overlays[i];
+      console.log("overlay.x :>> ", overlay.x);
+      console.log("overlay.y :>> ", overlay.y);
+      console.log("overlay.width :>> ", overlay.width);
+      console.log("overlay.height :>> ", overlay.height);
       if (
         mouseX >= overlay.x &&
         mouseX <= overlay.x + overlay.width &&
@@ -126,6 +171,40 @@ document.addEventListener("DOMContentLoaded", function () {
     if (isDragging && selectedOverlay) {
       const mouseX = event.offsetX;
       const mouseY = event.offsetY;
+
+      // Depending on edit state, perform different actions
+      if (editState === EditState.POSITION) {
+        selectedOverlay.x = mouseX - dragStartX;
+        selectedOverlay.y = mouseY - dragStartY;
+      } else if (editState === EditState.ROTATION) {
+        const centerX = selectedOverlay.x + selectedOverlay.width / 2;
+        const centerY = selectedOverlay.y + selectedOverlay.height / 2;
+        const angle =
+          dragAngleStartOverlay +
+          Math.atan2(mouseY - centerY, mouseX - centerX) -
+          dragAngleStartMouse;
+        selectedOverlay.rotation = angle;
+      } else if (editState === EditState.SCALE) {
+        selectedOverlay.width = mouseX - selectedOverlay.x;
+        selectedOverlay.height = mouseY - selectedOverlay.y;
+      }
+
+      redrawCanvas();
+    }
+  });
+
+  // Function to handle mouse move event for resizing and rotating overlays
+  canvas.addEventListener("touchmove", function (event) {
+    const rect = canvas.getBoundingClientRect();
+
+    console.log("touch move event :>>>>>>>>>>>> ");
+    console.log("selectedOverlay :>> ", selectedOverlay);
+    console.log("isDragging :>> ", selectedOverlay);
+    if (isDragging && selectedOverlay) {
+      console.log("event.touches[0].pageX :>> ", event.touches[0].pageX);
+      console.log("event.touches[0].pageY :>> ", event.touches[0].pageY);
+      const mouseX = event.touches[0].clientX - rect.left;
+      const mouseY = event.touches[0].clientY - rect.top;
 
       // Depending on edit state, perform different actions
       if (editState === EditState.POSITION) {
